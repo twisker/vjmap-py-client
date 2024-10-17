@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="vjmap-py-client",
+    name="vjmap_py_client",
     version="0.1.1",
     author="Neo Wang",
     author_email="wang.neo@gmail.com",
@@ -13,7 +13,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/twisker/vjmap-py-client",
     license='MIT',
-    packages=['vjmap-py-client'],
+    packages=['vjmap_py_client'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

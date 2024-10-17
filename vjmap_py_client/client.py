@@ -1,7 +1,7 @@
 import json
 import requests
 from typing import Optional, List, Tuple, Callable, Any
-from utils import file_md5
+from .utils import file_md5
 
 
 # 定义查询实体参数基类
@@ -120,7 +120,7 @@ class VjmapClientBase(object):
         self.access_token = access_token
         self.base_url = base_url[:-1] if base_url.endswith('/') else base_url
         self.session = requests.Session()
-        self.session.headers.update({"Token": f"Bearer {access_token}"})
+        self.session.headers.update({"Token": access_token})
 
     def _request(self, method: str, endpoint: str, **kwargs):
         if method.upper() == "GET":
@@ -147,7 +147,7 @@ class VjmapClient(VjmapClientBase):
         return self._upload_file(endpoint, map_file_path, **kwargs)
 
     def open_map(self, map_id: str, **kwargs):
-        endpoint = f'/map/{map_id}'
+        endpoint = f'/map/openmap/{map_id}'
         return self._request('GET', endpoint, **kwargs)
 
     def update_map(self, map_id: str, entities: list, **kwargs):
@@ -173,7 +173,7 @@ class VjmapClient(VjmapClientBase):
         return self._request('GET', endpoint, **kwargs)
 
     def query_features(self, map_id: str, version: str, parameters: PointQueryParameter|RectQueryParameter|ExprQueryParameter|ConditionQueryParameter, **kwargs):
-        endpoint = f'/map/query/{map_id}/{version}'
+        endpoint = f'/map/cmd/queryFeatures/{map_id}/{version}'
         return self._request('POST', endpoint, json=parameters.to_dict(), **kwargs)
 
     def get_data_bounds(self, map_id: str, version: str, **kwargs):
