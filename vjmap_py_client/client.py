@@ -1,7 +1,7 @@
 import json
 import requests
 from typing import Optional, List, Tuple, Callable, Any
-from .utils import file_md5
+from .utils import file_md5, file_object_md5
 
 
 # 定义查询实体参数基类
@@ -137,10 +137,13 @@ class VjmapClientBase(object):
             raise Exception(response.text)
 
     def _upload_file(self, endpoint: str, file_path: str, **kwargs):
-        with open(file_path, 'rb') as f:
-            files = {'file': f}
-            response = self._request('POST', endpoint, files=files, **kwargs)
-            return response
+        with open(file_path, 'rb') as file_object:
+            self._upload_file_object(endpoint, file_object, **kwargs)
+
+    def _upload_file_object(self, endpoint: str, file_object: Any, **kwargs):
+        files = {'file': file_object}
+        response = self._request('POST', endpoint, files=files, **kwargs)
+        return response
 
 
 class VjmapClient(VjmapClientBase):
@@ -163,6 +166,25 @@ class VjmapClient(VjmapClientBase):
         """
         endpoint = '/map/uploads'
         return self._upload_file(endpoint, map_file_path, **kwargs)
+
+    def upload_map_file_object(self, map_file_object: Any, **kwargs):
+        """
+        Upload a map file like object to the Vjmap server.
+
+        Parameters
+        ----------
+        map_file_object : File like object
+            The map file object to be uploaded. Its open() method shall be called.
+
+        Returns
+        -------
+        response : dict
+            The response from the server as a dict.
+
+        :link: https://vjmap.com/guide/restinterface.html#%E4%B8%8A%E4%BC%A0%E5%9B%BE%E5%BD%A2
+        """
+        endpoint = '/map/uploads'
+        return self._upload_file_object(endpoint, map_file_object, **kwargs)
 
     def open_map(self, map_id: str, **kwargs):
         """
@@ -228,6 +250,25 @@ class VjmapClient(VjmapClientBase):
         """
         endpoint = '/map/mapfile'
         return self._request("GET", endpoint, params={"md5": file_md5(map_file_path)}, **kwargs)
+
+    def map_file_object_uploaded(self, map_file_object: Any, **kwargs):
+        """
+        Check if a map file like object has been uploaded to the Vjmap server.
+
+        Parameters
+        ----------
+        map_file_object : File like object
+            The map file object to be uploaded. Its open() method shall be called.
+
+        Returns
+        -------
+        response : dict
+            The response from the server as a dict.
+
+        :link: https://vjmap.com/guide/restinterface.html#%E6%A3%80%E6%9F%A5%E6%96%87%E4%BB%B6%E6%98%AF%E5%90%A6%E4%B8%8A%E4%BC%A0%E8%BF%87
+        """
+        endpoint = '/map/mapfile'
+        return self._request("GET", endpoint, params={"md5": file_object_md5(map_file_object)}, **kwargs)
 
     def get_map_tile(self, map_id: str, version: str, stylename: str, zoom: int, x: int, y: int, fileid: str, as_mvt: bool = False, **kwargs):
         """
