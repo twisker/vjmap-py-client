@@ -123,9 +123,8 @@ class VjmapClientBase(object):
         self.session.headers.update({"Token": access_token})
 
     def _request(self, method: str, endpoint: str, as_json: bool = True, **kwargs):
-        if method.upper() == "GET":
-            kwargs["params"] = kwargs.get("params", {})
-            kwargs["params"]["token"] = self.access_token
+        kwargs["params"] = kwargs.get("params", {})
+        kwargs["params"]["token"] = self.access_token
         url = f"{self.base_url}{endpoint}" if endpoint.startswith('/') else f"{self.base_url}/{endpoint}"
         response = self.session.request(method, url, **kwargs)
         if response.status_code == 200:
@@ -138,7 +137,8 @@ class VjmapClientBase(object):
 
     def _upload_file(self, endpoint: str, file_path: str, **kwargs):
         with open(file_path, 'rb') as file_object:
-            self._upload_file_object(endpoint, file_object, **kwargs)
+            res = self._upload_file_object(endpoint, file_object, **kwargs)
+        return res
 
     def _upload_file_object(self, endpoint: str, file_object: Any, **kwargs):
         files = {'file': file_object}

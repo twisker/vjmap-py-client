@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="vjmap_py_client",
-    version="0.1.3",
+    version="0.1.4",
     author="Neo Wang",
     author_email="wang.neo@gmail.com",
     description="A package for interacting with the Vjmap Service-API",
